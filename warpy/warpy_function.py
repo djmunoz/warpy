@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class Function(object):
     """
     A scalar or vector function over a mesh (of class Mesh).
@@ -76,49 +79,39 @@ class Function(object):
         self.mesh = mesh
         self.num_comp = num_comp
         self.indices = []
+        
         # Create array(s) to store mesh point values
         if (self.mesh.has_space() and not self.mesh.has_time()) or \
            (self.mesh.has_space() and self.mesh.has_time() and \
             space_only):
-        # Space mesh only
-if num_comp == 1:
-self.u = np.zeros(
-[self.mesh.N[i] + 1
-for i in range(len(self.mesh.N))])
-self.indices = [
-’x’+str(i) for i in range(len(self.mesh.N))]
-else:
-self.u = np.zeros(
-[self.mesh.N[i] + 1
-for i in range(len(self.mesh.N))] +
-[num_comp])
-self.indices = [
-'x'+str(i)
-for i in range(len(self.mesh.N))] +\
-['component']
-if not self.mesh.has_space() and self.mesh.has_time():
-# Time mesh only
-if num_comp == 1:
-self.u = np.zeros(self.mesh.Nt+1)
-self.indices = ['time']
-else:
-# Need num_comp entries per time step
-self.u = np.zeros((self.mesh.Nt+1, num_comp))
-self.indices = ['time', 'component']
-if self.mesh.has_space() and self.mesh.has_time() \
-and not space_only:
-# Space-time mesh
-size = [self.mesh.Nt+1] + \
-[self.mesh.N[i]+1
-for i in range(len(self.mesh.N))]
-if num_comp > 1:
-self.indices = ['time'] + \
-['x'+str(i)
-for i in range(len(self.mesh.N))] +\
-['component']
-size += [num_comp]
-else:
-self.indices = ['time'] + ['x'+str(i)
-for i in range(len(self.mesh.N))]
-self.u = np.zeros(size)
+    
+            # Space mesh only
+            if num_comp == 1:
+                self.u = np.zeros([self.mesh.N[i] + 1 for i in range(len(self.mesh.N))])
+                self.indices = ['x'+str(i) for i in range(len(self.mesh.N))]
+            else:
+                self.u = np.zeros([self.mesh.N[i] + 1 for i in range(len(self.mesh.N))] + [num_comp])
+                self.indices = [ 'x'+str(i) for i in range(len(self.mesh.N))] + ['component']
+                
+        if not self.mesh.has_space() and self.mesh.has_time():
+            # Time mesh only
+            if num_comp == 1:
+                self.u = np.zeros(self.mesh.Nt+1)
+                self.indices = ['time']
+            else:
+                # Need num_comp entries per time step
+                self.u = np.zeros((self.mesh.Nt+1, num_comp))
+                self.indices = ['time', 'component']
+                
+        if self.mesh.has_space() and self.mesh.has_time() and not space_only:
+            # Space-time mesh
+            size = [self.mesh.Nt+1] + [self.mesh.N[i]+1 for i in range(len(self.mesh.N))]
+            if num_comp > 1:
+                self.indices = ['time'] + ['x'+str(i)
+                                           for i in range(len(self.mesh.N))] + ['component']
+                size += [num_comp]
+            else:
+                self.indices = ['time'] + ['x'+str(i) for i in range(len(self.mesh.N))]
+                
+            self.u = np.zeros(size)
             
